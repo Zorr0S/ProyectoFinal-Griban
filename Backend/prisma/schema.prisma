@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Roles {
+  PROFESOR
+  ALUMNO
+}
+
+model Users {
+  id                 Int                  @id @default(autoincrement())
+  UserName           String
+  Nombre             String
+  Contrasena         String
+  Rol                Roles                @default(ALUMNO)
+  Asistencias        Asistencias[]
+  EvidenciaActividad EvidenciaActividad[]
+
+  @@unique([UserName])
+}
+
+model Periodo {
+  id          Int      @id @default(autoincrement())
+  Nombre String
+  FechaInicio DateTime @default(now())
+  FechaFinal  DateTime @default(now())
+  
+  RegistroAsistencia RegistroAsistencia[]
+  Asistencias        Asistencias[]
+}
+model Asistencias {
+  id         Int                @id @default(autoincrement())
+  Fecha      DateTime
+  AlumnoID   Int
+  RegistroID Int
+  Registro   RegistroAsistencia @relation(references: [id], fields: [RegistroID])
+  Alumnos    Users              @relation(references: [id], fields: [AlumnoID])
+  PeriodoID  Int
+  Periodo    Periodo            @relation(references: [id], fields: [PeriodoID])
+
+  @@unique([id, AlumnoID])
+}
+
+
+
+model RegistroAsistencia {
+  id        Int     @id @default(autoincrement())
+  Letra     String
+  Descripcion String
+  Valor     Float
+  PeriodoID Int
+  Periodo   Periodo @relation(references: [id], fields: [PeriodoID])
+
+  Asistencias Asistencias[]
+}
+
+model Actividades {
+  id                 Int                  @id @default(autoincrement())
+  Tipo               TipoActividad?
+  Nombre             String
+  Descripcion        String
+  FechaSubida        DateTime             @default(now())
+  FechaPara          DateTime             @default(now())
+  EvidenciaActividad EvidenciaActividad[]
+}
+
+enum TipoActividad {
+  EXAMEN
+  PORTAFOLIO
+  ACTIVIDADCOMPLEMENTARIA
+}
+
+model EvidenciaActividad {
+  id           Int         @id @default(autoincrement())
+  ActividadID  Int
+  Actividad    Actividades @relation(references: [id], fields: [ActividadID])
+  FechaSubida  DateTime    @default(now())
+  AlumnoID     Int
+  Alumno       Users       @relation(references: [id], fields: [AlumnoID])
+  EvidenciaURL String?
+
+  @@unique([AlumnoID, ActividadID])
+}
