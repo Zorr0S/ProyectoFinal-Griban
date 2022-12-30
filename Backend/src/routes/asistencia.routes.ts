@@ -1,7 +1,9 @@
 import { Router } from "express";
-import { Login, Register } from "../controllers/users.controller";
+import { CambiarRegistroAsistencia, CrearAsistenciaHoy, GetAsistencia } from "../controllers/asistencia.controller";
 
 const router = Router();
-router.get("/login",Login)
-router.post("/register",Register)
+router.get("/TomarAsistenciaHoy/:PeriodoID",CrearAsistenciaHoy)
+router.get("/Asistencia",GetAsistencia)
+router.patch("/Asistencia/:PeriodoID/cambiar/:AsistenciaID",CambiarRegistroAsistencia)
+
 export default router;

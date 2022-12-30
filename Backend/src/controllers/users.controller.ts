@@ -12,10 +12,13 @@ export async function Login(req: Request, res: Response) {
       where: { AND: [{ UserName: User }, { Contrasena: Password }] },
       select: { id: true, UserName: true },
     });
-    res.json(Login);
+    console.log("Logead")
+    return res.json(Login);
   } catch (error) {
     console.error(error);
-    res
+    console.log("no")
+
+    return  res
       .status(500)
       .json([{ status: "ERROR", mensaje: "Contrasena incorrecta" }]);
   }

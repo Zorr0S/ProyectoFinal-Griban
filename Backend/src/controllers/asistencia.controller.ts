@@ -30,8 +30,9 @@ export async function CrearAsistenciaHoy(req: Request, res: Response) {
         RegistroID: 3,
         PeriodoID: parseInt(PeriodoID),
       })),
-    });
     
+    });
+
     return res.json(asistencia);
   } catch (error) {
     console.error(error);
@@ -41,19 +42,52 @@ export async function CrearAsistenciaHoy(req: Request, res: Response) {
   }
 }
 
-export async function Register(req: Request, res: Response) {
+export async function GetAsistencia(req: Request, res: Response) {
   try {
-    const { Nombre, User, Password } = req.body;
-    const Registro = await prisma.users.create({
-      data: {
-        Nombre: Nombre,
-        UserName: User,
-        Contrasena: Password,
+    const asistencia = await prisma.asistencias.findMany({
+      orderBy: [
+        {
+          AlumnoID: "asc",
+        },
+        {
+          Fecha: "asc",
+        },
+      ],
+      include: {
+        Alumnos: { select: { Nombre: true } },
+        Registro:true
       },
     });
-    res.json(Registro);
+
+    return res.json(asistencia);
   } catch (error) {
     console.error(error);
-    res.status(500).json([{ status: "ERROR", mensaje: "Ocurrio un error" }]);
+    return res
+      .status(500)
+      .json({ status: "ERROR", mensaje: "Contrasena incorrecta" });
   }
 }
+
+export async function CambiarRegistroAsistencia(req: Request, res: Response) {
+  try {
+    const { PeriodoID,AsistenciaID } = req.params;
+    const {Registro} = req.body;
+
+    const asistencia = await prisma.asistencias.update({
+    
+    where:{id:parseInt(AsistenciaID)
+    },
+    data:{
+      RegistroID:parseInt(Registro)
+    },include:{Registro:true}
+    });
+
+    return res.json(asistencia);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ status: "ERROR", mensaje: "Contrasena incorrecta" });
+  }
+}
+
