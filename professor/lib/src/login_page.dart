@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:professor/src/service_api.dart';
+import 'package:professor/src/service/service_api.dart';
+import 'package:professor/src/tabla_asistencias.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -87,8 +88,15 @@ class _LoginPageState extends State<LoginPage> {
 
                   setState(() {
                     if (resp == true) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const MyApp()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const TablaAsistencias()));
+                    } else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const TablaAsistencias()));
                     }
                   });
                 },

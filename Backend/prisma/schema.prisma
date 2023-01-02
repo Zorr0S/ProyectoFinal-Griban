@@ -23,6 +23,7 @@ model Users {
   Rol                Roles                @default(ALUMNO)
   Asistencias        Asistencias[]
   EvidenciaActividad EvidenciaActividad[]
+  
 
   @@unique([UserName])
 }
@@ -86,6 +87,13 @@ model EvidenciaActividad {
   AlumnoID     Int
   Alumno       Users       @relation(references: [id], fields: [AlumnoID])
   EvidenciaURL String?
+  Estado  EstadoEvidencia @default(SIN_ENTREGAR)
 
   @@unique([AlumnoID, ActividadID])
+}
+
+enum EstadoEvidencia {
+  SIN_ENTREGAR
+  A_TIEMPO
+  ASTRASO
 }

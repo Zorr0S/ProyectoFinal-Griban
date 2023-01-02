@@ -30,7 +30,6 @@ export async function CrearAsistenciaHoy(req: Request, res: Response) {
         RegistroID: 3,
         PeriodoID: parseInt(PeriodoID),
       })),
-    
     });
 
     return res.json(asistencia);
@@ -44,21 +43,33 @@ export async function CrearAsistenciaHoy(req: Request, res: Response) {
 
 export async function GetAsistencia(req: Request, res: Response) {
   try {
-    const asistencia = await prisma.asistencias.findMany({
-      orderBy: [
-        {
-          AlumnoID: "asc",
+    // const asistencia = await prisma.asistencias.findMany({
+    //   orderBy: [
+    //     {
+    //       AlumnoID: "asc",
+    //     },
+    //     {
+    //       Fecha: "asc",
+    //     },
+    //   ],
+    //   include: {
+    //     Alumnos: { select: { Nombre: true } },
+    //     Registro: true,
+    //   },
+    // });
+ console.log("Entro")
+    const asistencia = await prisma.users.findMany({
+      where: { Rol: "ALUMNO" },
+      select: {
+        Nombre: true,
+        Asistencias: {
+        
+          include: {
+            Registro: true,
+          },
         },
-        {
-          Fecha: "asc",
-        },
-      ],
-      include: {
-        Alumnos: { select: { Nombre: true } },
-        Registro:true
       },
     });
-
     return res.json(asistencia);
   } catch (error) {
     console.error(error);
@@ -70,18 +81,18 @@ export async function GetAsistencia(req: Request, res: Response) {
 
 export async function CambiarRegistroAsistencia(req: Request, res: Response) {
   try {
-    const { PeriodoID,AsistenciaID } = req.params;
-    const {Registro} = req.body;
+    const { PeriodoID, AsistenciaID } = req.params;
+    const { Registro } = req.body;
 
     const asistencia = await prisma.asistencias.update({
-    
-    where:{id:parseInt(AsistenciaID)
-    },
-    data:{
-      RegistroID:parseInt(Registro)
-    },include:{Registro:true}
+      where: { id: parseInt(AsistenciaID) },
+      data: {
+        RegistroID: parseInt(Registro),
+      },
+      include: { Registro: true },
     });
-
+    console.log(`ID:${AsistenciaID} \n valor:${Registro}`)
+console.log(asistencia)
     return res.json(asistencia);
   } catch (error) {
     console.error(error);
@@ -90,4 +101,3 @@ export async function CambiarRegistroAsistencia(req: Request, res: Response) {
       .json({ status: "ERROR", mensaje: "Contrasena incorrecta" });
   }
 }
-

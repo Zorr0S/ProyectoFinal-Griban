@@ -4,20 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-Future<Album> fetchAlbum() async {
-  final response = await http
-      .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    return Album.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load album');
-  }
-}
+import 'api_classes.dart';
 
 class ApiService {
   final String domain = "localhost";
@@ -25,6 +12,7 @@ class ApiService {
   var headers = {
     'Content-Type': 'application/json',
   };
+  /////////////////////////////////////////////////////////
   Future<bool> login(String user, String pass) async {
     var url = Uri.http('$domain:$port', '/Users/login');
     final response = await http.post(url,
@@ -34,6 +22,34 @@ class ApiService {
     } else {
       return false;
     }
+  }
+
+  Future<List<Alumnos>> getAsistencias() async {
+    var url = Uri.http('$domain:$port', '/Asistencia/Asistencia');
+    final response = await http.get(url);
+    print(url.toString());
+    List<Alumnos> listaAsistencias;
+
+    if (response.statusCode == 200) {
+      final List t = json.decode(response.body);
+      // ignore: avoid_print
+      listaAsistencias = t.map((item) => Alumnos.fromJson(item)).toList();
+      return listaAsistencias;
+    }
+    return listaAsistencias = [];
+  }
+
+  Future changeAsistenciaAlumno(
+      int periodoID, int asistenciaID, int valor) async {
+    var url = Uri.http('$domain:$port',
+        '/Asistencia/Asistencia/$periodoID/cambiar/$asistenciaID');
+    var data = {"Registro": valor};
+    var body = json.encode(data);
+    final response = await http.patch(url, headers: headers, body: body);
+    if (response.statusCode == 200) {
+      return response.body;
+    }
+    return response.body;
   }
 }
 
@@ -54,6 +70,21 @@ class Album {
       id: json['id'],
       title: json['title'],
     );
+  }
+}
+
+Future<Album> fetchAlbum() async {
+  final response = await http
+      .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    return Album.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load album');
   }
 }
 
