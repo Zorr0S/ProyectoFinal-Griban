@@ -1,5 +1,8 @@
+import 'package:confirm_dialog/confirm_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:professor/src/actividades/actividad_edit.dart';
 import 'package:professor/src/service/api_classes.dart';
 import 'package:professor/src/service/service_api.dart';
 
@@ -15,9 +18,12 @@ class _ActividadesCrudPageState extends State<ActividadesCrudPage> {
   late Future<List<Actividades>> _data;
   @override
   void initState() {
-    // TODO: implement initState
-    _data = _cliete.getActividades();
+    actualizar();
     super.initState();
+  }
+
+  void actualizar() {
+    _data = _cliete.getActividades();
   }
 
   @override
@@ -39,6 +45,11 @@ class _ActividadesCrudPageState extends State<ActividadesCrudPage> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return ListaActividades(
                     actividades: snapshot.data,
+                    onChange: () {
+                      setState(() {
+                        actualizar();
+                      });
+                    },
                   );
                 } else {
                   return Container();
@@ -66,7 +77,7 @@ class _CreateActivadadState extends State<CreateActivadad> {
   final _titulo = TextEditingController();
   final _descripcion = TextEditingController();
   TextEditingController dateController = TextEditingController();
-  TipoActividad DPTipoActividad = listaTipoActividad.first;
+  TipoActividad dPTipoActividad = listaTipoActividad.first;
   final _inputPadding = const EdgeInsets.symmetric(horizontal: 15, vertical: 5);
 
   @override
@@ -149,12 +160,10 @@ class _CreateActivadadState extends State<CreateActivadad> {
                       lastDate: DateTime(2101));
 
                   if (pickedDate != null) {
-                    print(
-                        pickedDate); //get the picked date in the format => 2022-07-04 00:00:00.000
+                    //get the picked date in the format => 2022-07-04 00:00:00.000
                     String formattedDate = DateFormat('yyyy-MM-dd').format(
                         pickedDate); // format date in required form here we use yyyy-MM-dd that means time is removed
-                    print(
-                        formattedDate); //formatted date output using intl package =>  2022-07-04
+                    //formatted date output using intl package =>  2022-07-04
                     //You can format date as per your need
 
                     setState(() {
@@ -162,7 +171,9 @@ class _CreateActivadadState extends State<CreateActivadad> {
                           formattedDate; //set foratted date to TextField value.
                     });
                   } else {
-                    print("Date is not selected");
+                    if (kDebugMode) {
+                      print("Date is not selected");
+                    }
                   }
                 },
               ),
@@ -177,10 +188,10 @@ class _CreateActivadadState extends State<CreateActivadad> {
                                 child: Text(e.nombre),
                               ))
                       .toList(),
-                  value: DPTipoActividad,
+                  value: dPTipoActividad,
                   onChanged: ((value) {
                     setState(() {
-                      DPTipoActividad = value!;
+                      dPTipoActividad = value!;
                     });
                   })),
             ),
@@ -190,8 +201,8 @@ class _CreateActivadadState extends State<CreateActivadad> {
                 if (_formKey.currentState!.validate()) {
                   // If the form is valid, display a snackbar. In the real world,
                   // you'd often call a server or save the information in a database.
-                  var aux = await _cliete.createActivdad(
-                      DPTipoActividad.value,
+                  await _cliete.createActivdad(
+                      dPTipoActividad.value,
                       _titulo.text,
                       _descripcion.text,
                       DateTime.parse(dateController.text));
@@ -209,7 +220,10 @@ class _CreateActivadadState extends State<CreateActivadad> {
 
 class ListaActividades extends StatefulWidget {
   final List<Actividades> actividades;
-  const ListaActividades({super.key, required this.actividades});
+  final VoidCallback onChange;
+
+  const ListaActividades(
+      {super.key, required this.actividades, required this.onChange});
 
   @override
   State<ListaActividades> createState() => _ListaActividadesState();
@@ -217,9 +231,10 @@ class ListaActividades extends StatefulWidget {
 
 class _ListaActividadesState extends State<ListaActividades> {
   List<Actividades> _actividades = [];
+  final _cliete = ApiService();
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _actividades = widget.actividades;
   }
@@ -234,7 +249,11 @@ class _ListaActividadesState extends State<ListaActividades> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     ListTile(
-                      leading: Icon(Icons.picture_as_pdf_outlined),
+                      leading: Chip(
+                          label: Text(listaTipoActividad
+                              .firstWhere((element) =>
+                                  element.value == _actividades[index].tipo)
+                              .nombre)),
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -248,14 +267,57 @@ class _ListaActividadesState extends State<ListaActividades> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        TextButton(
+                        ElevatedButton(
                           child: const Text('Ver entrega'),
                           onPressed: () {/* ... */},
                         ),
                         const SizedBox(width: 8),
-                        TextButton(
+                        ElevatedButton(
                           child: const Text('Editar'),
-                          onPressed: () {/* ... */},
+                          onPressed: () async {
+                            bool refrescar = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => EditActividad(
+                                          id: _actividades[index].id,
+                                          titulo: _actividades[index].nombre,
+                                          descripcion:
+                                              _actividades[index].descripcion,
+                                          fecha: DateFormat('yyyy-MM-dd')
+                                              .format(_actividades[index]
+                                                  .fechaPara),
+                                          tipoActividad: listaTipoActividad
+                                              .firstWhere((element) =>
+                                                  element.value ==
+                                                  _actividades[index].tipo),
+                                          terminoEdicion: () {
+                                            widget.onChange();
+                                          },
+                                        )));
+                            if (refrescar) {
+                              widget.onChange();
+                              setState(() {
+                                refrescar = false;
+                              });
+                            } else {
+                              setState(() {
+                                refrescar = false;
+                              });
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          child: const Text('Eliminar'),
+                          onPressed: () async {
+                            if (await confirm(context,
+                                title: const Text("Esta seguro?"),
+                                content: const Text("Esto es permanente"))) {
+                              await _cliete
+                                  .eliminarActividad(_actividades[index].id);
+                              widget.onChange();
+                            }
+                          },
                         ),
                         const SizedBox(width: 8),
                       ],

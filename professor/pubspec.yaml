@@ -39,6 +39,7 @@ dependencies:
   http: ^0.13.5
   intl: ^0.18.0
   dio: ^4.0.6
+  confirm_dialog: ^1.0.1
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +66,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/icono.png
+    - assets/images/Icono.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

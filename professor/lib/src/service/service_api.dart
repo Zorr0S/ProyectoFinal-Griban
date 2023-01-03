@@ -108,7 +108,6 @@ class ApiService {
     String description,
     DateTime fecha,
   ) async {
-    Actividades aux;
     try {
       final response = await dio.post("/Actividad/CREAR/actividad", data: {
         "Tipo": tipo,
@@ -117,12 +116,51 @@ class ApiService {
         "FechaFinal": fecha.toIso8601String()
       });
       if (response.statusCode == 200) {
-        aux = Actividades.fromJson(response.data);
         return true;
       }
       print(response.statusCode);
       return false;
     } on Exception catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> updateActivdad(
+    int id,
+    String tipo,
+    String nombre,
+    String description,
+    DateTime fecha,
+  ) async {
+    try {
+      final response =
+          await dio.patch("/Actividad/EDITAR/actividad/$id", data: {
+        "Tipo": tipo,
+        "Nombre": nombre,
+        "Descripcion": description,
+        "FechaFinal": fecha.toIso8601String()
+      });
+      if (response.statusCode == 200) {
+        return true;
+      }
+      print(response.statusCode);
+      return false;
+    } on Exception catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> eliminarActividad(int id) async {
+    try {
+      final response = await dio.delete("/Actividad/BORRAR/actividad/$id");
+      if (response.statusCode == 200) {
+        return true;
+      }
+      print(response.statusCode);
+      return false;
+    } catch (e) {
       print(e);
       return false;
     }

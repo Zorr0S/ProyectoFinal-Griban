@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:professor/src/service/service_api.dart';
-import 'package:professor/src/tabla_asistencias.dart';
 
-import 'activadades_crud_page.dart';
+import 'actividades/activadades_crud_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

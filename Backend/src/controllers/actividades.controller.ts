@@ -23,13 +23,14 @@ export async function getActividades(req: Request, res: Response) {
 export async function CreateActividad(req: Request, res: Response) {
   try {
     const { Tipo, Nombre, Descripcion, FechaFinal } = req.body;
-
+    const Users = await prisma.users.findMany({where:{Rol:"ALUMNO"}})
     const Activades = await prisma.actividades.create({
       data: {
         Nombre: Nombre,
         Descripcion: Descripcion,
         Tipo: Tipo,
         FechaPara: new Date(FechaFinal),
+        EvidenciaActividad:{ createMany:{data:[Users.map(({id})=>({alum}))]}}
       },
     });
     return res.json(Activades);
@@ -55,6 +56,23 @@ export async function UpdateActividad(req: Request, res: Response) {
         Tipo: Tipo,
         FechaPara: new Date(FechaFinal),
       },
+    });
+    return res.json(Activades);
+  } catch (error) {
+    console.error(error);
+    console.log("no");
+
+    return res
+      .status(500)
+      .json([{ status: "ERROR", mensaje: "Contrasena incorrecta" }]);
+  }
+}
+export async function EliminarActividad(req: Request, res: Response) {
+  try {
+    const { IDActividad } = req.params;
+
+    const Activades = await prisma.actividades.delete({
+      where: { id: parseInt(IDActividad) },
     });
     return res.json(Activades);
   } catch (error) {
@@ -98,8 +116,6 @@ export const StorageGroupIcon = multer.diskStorage({
     const { Nombre, Descripcion, AlumnoID } = req.body;
     console.log("si: " + req.file?.size);
     let NombreArchivo = file.originalname;
-    
-    
 
     await prisma.evidenciaActividad.create({
       data: {
