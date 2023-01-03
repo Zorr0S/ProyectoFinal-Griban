@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { Login, Register } from "../controllers/users.controller";
+import { CreateActividad, getActividades } from "../controllers/actividades.controller";
 
 const router = Router();
-router.post("/login",Login)
-router.post("/loginMaestro",Login)
+router.get("/Actividades",getActividades)
+router.post("/CREAR/actividad", CreateActividad)
 
-router.post("/register",Register)
 export default router;

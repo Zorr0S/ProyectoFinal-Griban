@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:professor/src/service/service_api.dart';
 import 'package:professor/src/tabla_asistencias.dart';
 
+import 'activadades_crud_page.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -91,12 +93,12 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const TablaAsistencias()));
+                              builder: (_) => const ActividadesCrudPage()));
                     } else {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const TablaAsistencias()));
+                              builder: (_) => const ActividadesCrudPage()));
                     }
                   });
                 },

@@ -1,19 +1,15 @@
 import express, { Request, Response } from "express";
 import { Prisma, PrismaClient } from "@prisma/client";
+import multer from "multer";
+import path from "path";
+import { DominioIP } from "../global";
 
 const prisma = new PrismaClient();
 export async function getActividades(req: Request, res: Response) {
   try {
     const { Tipo, Nombre, Descripcion, FechaFinal } = req.body;
 
-    const Activades = await prisma.actividades.create({
-      data: {
-        Nombre: Nombre,
-        Descripcion: Descripcion,
-        Tipo: Tipo,
-        FechaPara: new Date(FechaFinal),
-      },
-    });
+    const Activades = await prisma.actividades.findMany();
     return res.json(Activades);
   } catch (error) {
     console.error(error);
@@ -89,3 +85,35 @@ export async function GetAlumosEvidence(req: Request, res: Response) {
       .json([{ status: "ERROR", mensaje: "Contrasena incorrecta" }]);
   }
 }
+
+//file related stuff
+
+export const StorageGroupIcon = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    let dir = "uploads";
+    cb(null, dir);
+  },
+  filename: async (req, file, cb) => {
+    const { IDActividad } = req.params;
+    const { Nombre, Descripcion, AlumnoID } = req.body;
+    console.log("si: " + req.file?.size);
+    let NombreArchivo = file.originalname;
+    
+    
+
+    await prisma.evidenciaActividad.create({
+      data: {
+        Nombre: Nombre,
+        Descripcion: Descripcion,
+        ActividadID: parseInt(IDActividad),
+        AlumnoID: parseInt(AlumnoID),
+        //file related
+        NombreArchivo: NombreArchivo,
+        EvidenciaURL: `${DominioIP}/archivo/${NombreArchivo}`,
+        RutaArchivo: file.destination || "",
+      },
+    });
+
+    cb(null, NombreArchivo);
+  },
+});

@@ -16,8 +16,15 @@ class _TablaAsistenciasState extends State<TablaAsistencias> {
   late Future<List<Alumnos>> _data;
 
   List<DataCell> _createCeldasFecha(List<Asistencia> fechas, int idUser) {
-    return List.generate(fechas.length,
-        (index) => DataCell(AsistenciaDropDown(value: fechas[index])));
+    return List.generate(
+        fechas.length,
+        (index) => DataCell(AsistenciaDropDown(
+              value: fechas[index],
+              asistenciaChanged: () {
+                _data = _cliente.getAsistencias();
+                setState(() {});
+              },
+            )));
   }
 
   List<DataColumn> _createFechaColumns(List<Asistencia> fechas) {
@@ -87,7 +94,9 @@ class _TablaAsistenciasState extends State<TablaAsistencias> {
 
 class AsistenciaDropDown extends StatefulWidget {
   final Asistencia value;
-  const AsistenciaDropDown({super.key, required this.value});
+  final VoidCallback asistenciaChanged;
+  const AsistenciaDropDown(
+      {super.key, required this.value, required this.asistenciaChanged});
 
   @override
   State<AsistenciaDropDown> createState() => _AsistenciaDropDownState();
@@ -115,12 +124,13 @@ class _AsistenciaDropDownState extends State<AsistenciaDropDown> {
             .toList(),
         value: dropdownValue,
         onChanged: (e) async {
+          // ignore: unused_local_variable
           var aux =
               await _cliente.changeAsistenciaAlumno(1, widget.value.id, e!.id);
-          print(aux);
           setState(() {
-            dropdownValue = e!;
+            dropdownValue = e;
           });
+          widget.asistenciaChanged();
         });
   }
 }

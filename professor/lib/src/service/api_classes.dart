@@ -80,3 +80,44 @@ const List<Registro> opcionesRegistro = [
   Registro(id: 3, letra: "F", descripcion: "Falta", valor: 0, periodoID: 1),
   Registro(id: 4, letra: "R", descripcion: "Retardo", valor: 0, periodoID: 1),
 ];
+
+class TipoActividad {
+  String nombre;
+  String value;
+  TipoActividad({required this.nombre, required this.value});
+}
+
+List<TipoActividad> listaTipoActividad = [
+  TipoActividad(value: "PORTAFOLIO", nombre: "Portafolio"),
+  TipoActividad(
+      value: "ACTIVIDADCOMPLEMENTARIA", nombre: "Actividad Complementaria"),
+  TipoActividad(value: "EXAMEN", nombre: "Examen")
+];
+
+class Actividades {
+  final int id;
+  final String tipo;
+  final String nombre;
+  final String descripcion;
+  final DateTime fechaSubida;
+  final DateTime fechaPara;
+
+  const Actividades({
+    required this.id,
+    required this.tipo,
+    required this.nombre,
+    required this.descripcion,
+    required this.fechaSubida,
+    required this.fechaPara,
+  });
+
+  factory Actividades.fromJson(Map<String, dynamic> json) {
+    return Actividades(
+        id: json['id'],
+        tipo: json["Tipo"],
+        nombre: json["Nombre"],
+        descripcion: json["Descripcion"],
+        fechaSubida: DateTime.parse(json["FechaSubida"]),
+        fechaPara: DateTime.parse(json["FechaPara"]));
+  }
+}

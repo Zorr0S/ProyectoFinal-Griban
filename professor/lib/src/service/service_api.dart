@@ -1,6 +1,10 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,44 +16,116 @@ class ApiService {
   var headers = {
     'Content-Type': 'application/json',
   };
+  BaseOptions options2 = BaseOptions(
+    baseUrl: "http://localhost:3000",
+    connectTimeout: 3000,
+    receiveTimeout: 3000,
+  );
+  var dio = Dio();
+  ApiService() {
+    dio.options = options2;
+  }
   /////////////////////////////////////////////////////////
   Future<bool> login(String user, String pass) async {
-    var url = Uri.http('$domain:$port', '/Users/login');
-    final response = await http.post(url,
-        headers: headers, body: jsonEncode({"User": user, "Password": pass}));
-    if (response.statusCode == 200) {
-      return true;
-    } else {
+    //var url = Uri.http('$domain:$port', '/Users/login');
+    try {
+      final response = await dio.post("/Users/login",
+          data: {"User": user, "Password": pass},
+          options: Options(
+              headers: {HttpHeaders.contentTypeHeader: "application/json"}));
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } on Exception catch (e) {
+      print(e);
       return false;
     }
   }
 
   Future<List<Alumnos>> getAsistencias() async {
-    var url = Uri.http('$domain:$port', '/Asistencia/Asistencia');
-    final response = await http.get(url);
-    print(url.toString());
+    // var url = Uri.http('$domain:$port', '/Asistencia/Asistencia');
     List<Alumnos> listaAsistencias;
 
-    if (response.statusCode == 200) {
-      final List t = json.decode(response.body);
-      // ignore: avoid_print
-      listaAsistencias = t.map((item) => Alumnos.fromJson(item)).toList();
-      return listaAsistencias;
+    try {
+      final response = await dio.get('/Asistencia/Asistencia');
+
+      if (response.statusCode == 200) {
+        final List t = response.data;
+        listaAsistencias = t.map((item) => Alumnos.fromJson(item)).toList();
+        return listaAsistencias;
+      }
+      return listaAsistencias = [];
+    } on Exception catch (e) {
+      print(e);
+      return listaAsistencias = [];
     }
-    return listaAsistencias = [];
   }
 
   Future changeAsistenciaAlumno(
       int periodoID, int asistenciaID, int valor) async {
-    var url = Uri.http('$domain:$port',
-        '/Asistencia/Asistencia/$periodoID/cambiar/$asistenciaID');
-    var data = {"Registro": valor};
-    var body = json.encode(data);
-    final response = await http.patch(url, headers: headers, body: body);
-    if (response.statusCode == 200) {
-      return response.body;
+    try {
+      // var url = Uri.http('$domain:$port',
+      //     '/Asistencia/Asistencia/$periodoID/cambiar/$asistenciaID');
+      // var data = {"Registro": valor};
+      // var body = json.encode(data);
+      final response = await dio.patch(
+          '/Asistencia/Asistencia/$periodoID/cambiar/$asistenciaID',
+          options: Options(
+              headers: {HttpHeaders.contentTypeHeader: "application/json"}),
+          data: {"Registro": valor});
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+      return response.data;
+    } on Exception catch (e) {
+      print(e);
+      return null;
     }
-    return response.body;
+  }
+
+// activity related
+  Future<List<Actividades>> getActividades() async {
+    List<Actividades> listaActividades = [];
+    try {
+      final response = await dio.get("/Actividad/Actividades");
+      if (response.statusCode == 200) {
+        final List t = response.data;
+        listaActividades = t.map((item) => Actividades.fromJson(item)).toList();
+        return listaActividades;
+      }
+      return listaActividades;
+    } on Exception catch (e) {
+      print(e);
+      return listaActividades;
+    }
+  }
+
+  Future<bool> createActivdad(
+    String tipo,
+    String nombre,
+    String description,
+    DateTime fecha,
+  ) async {
+    Actividades aux;
+    try {
+      final response = await dio.post("/Actividad/CREAR/actividad", data: {
+        "Tipo": tipo,
+        "Nombre": nombre,
+        "Descripcion": description,
+        "FechaFinal": fecha.toIso8601String()
+      });
+      if (response.statusCode == 200) {
+        aux = Actividades.fromJson(response.data);
+        return true;
+      }
+      print(response.statusCode);
+      return false;
+    } on Exception catch (e) {
+      print(e);
+      return false;
+    }
   }
 }
 
