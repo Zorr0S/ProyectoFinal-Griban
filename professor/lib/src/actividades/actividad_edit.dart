@@ -47,7 +47,13 @@ class _EditActividadState extends State<EditActividad> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Editar Activadad")),
+      appBar: AppBar(
+        title: const Text("Editar Activadad"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context, true),
+        ),
+      ),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         decoration: BoxDecoration(

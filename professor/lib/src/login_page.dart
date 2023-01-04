@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:professor/src/main_page.dart';
 import 'package:professor/src/service/service_api.dart';
 
 import 'actividades/activadades_crud_page.dart';
@@ -84,20 +85,16 @@ class _LoginPageState extends State<LoginPage> {
                   color: Colors.blue, borderRadius: BorderRadius.circular(20)),
               child: TextButton(
                 onPressed: () async {
-                  var resp = await _cliente.login(
+                  var resp = await _cliente.loginProfesor(
                       userTextField.text, contraTextField.text);
 
                   setState(() {
                     if (resp == true) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const ActividadesCrudPage()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const MainHub()));
                     } else {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const ActividadesCrudPage()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const MainHub()));
                     }
                   });
                 },

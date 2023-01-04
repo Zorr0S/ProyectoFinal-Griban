@@ -6,6 +6,8 @@ import 'package:professor/src/actividades/actividad_edit.dart';
 import 'package:professor/src/service/api_classes.dart';
 import 'package:professor/src/service/service_api.dart';
 
+import 'vista_evidencias.dart';
+
 class ActividadesCrudPage extends StatefulWidget {
   const ActividadesCrudPage({super.key});
 
@@ -268,14 +270,21 @@ class _ListaActividadesState extends State<ListaActividades> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => VerEvidenciasAlumnos(
+                                          id: _actividades[index].id,
+                                        )));
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green),
                           child: const Text('Ver entrega'),
-                          onPressed: () {/* ... */},
                         ),
-                        const SizedBox(width: 8),
                         ElevatedButton(
-                          child: const Text('Editar'),
                           onPressed: () async {
-                            bool refrescar = await Navigator.push(
+                            var refrescar = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (_) => EditActividad(
@@ -305,10 +314,11 @@ class _ListaActividadesState extends State<ListaActividades> {
                               });
                             }
                           },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange),
+                          child: const Text('Editar'),
                         ),
-                        const SizedBox(width: 8),
                         ElevatedButton(
-                          child: const Text('Eliminar'),
                           onPressed: () async {
                             if (await confirm(context,
                                 title: const Text("Esta seguro?"),
@@ -318,8 +328,10 @@ class _ListaActividadesState extends State<ListaActividades> {
                               widget.onChange();
                             }
                           },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red),
+                          child: const Text('Eliminar'),
                         ),
-                        const SizedBox(width: 8),
                       ],
                     ),
                   ],

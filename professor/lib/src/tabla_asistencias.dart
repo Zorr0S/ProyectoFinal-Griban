@@ -49,7 +49,35 @@ class _TablaAsistenciasState extends State<TablaAsistencias> {
             cells: [
                   DataCell(Text(datos[index].nombre)),
                 ] +
-                _createCeldasFecha(datos[index].asistencia, index)));
+                _createCeldasFecha(datos[index].asistencia, index) +
+                [
+                  DataCell(Text(_porcentajeAsistencia(datos[index].asistencia)
+                      .toString()))
+                ]));
+  }
+
+  int _getRetrasos(List<Asistencia> asistencia) {
+    var retrasos =
+        asistencia.where((element) => element.registro.letra == "R").toList();
+    var asistencias =
+        asistencia.where((element) => element.registro.letra == "A").toList();
+    var justificacion =
+        asistencia.where((element) => element.registro.letra == "J").toList();
+    var Faltas =
+        asistencia.where((element) => element.registro.letra == "A").toList();
+    var valorRetrasos = (retrasos.length / 3).truncate();
+    var valorRetrasosPositivos = (retrasos.length % 3);
+
+    return asistencias.length +
+        justificacion.length -
+        valorRetrasos +
+        valorRetrasosPositivos;
+  }
+
+  _porcentajeAsistencia(List<Asistencia> asistencia) {
+    var puntos = _getRetrasos(asistencia);
+
+    return (puntos / asistencia.length) * 100;
   }
 
   @override
@@ -80,7 +108,17 @@ class _TablaAsistenciasState extends State<TablaAsistencias> {
                               ),
                             ),
                           ] +
-                          _createFechaColumns(snapshot.data[0].asistencia),
+                          _createFechaColumns(snapshot.data[0].asistencia) +
+                          [
+                            const DataColumn(
+                              label: Expanded(
+                                child: Text(
+                                  'Asistencia',
+                                  style: TextStyle(fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                            )
+                          ],
                       rows: _createRows(snapshot.data));
                 } else {
                   return const Text("Cargando");

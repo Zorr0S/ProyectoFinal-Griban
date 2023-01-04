@@ -82,16 +82,16 @@ enum TipoActividad {
 model EvidenciaActividad {
   id           Int         @id @default(autoincrement())
   ActividadID  Int
-  Nombre String
-  Descripcion String
-  Actividad    Actividades @relation(references: [id], fields: [ActividadID])
-  FechaSubida  DateTime    @default(now())
+  Nombre String?
+  Descripcion String?
+  Actividad    Actividades @relation(references: [id], fields: [ActividadID], onDelete: Cascade)
+  FechaSubida  DateTime?    @default(now())
   AlumnoID     Int
   Alumno       Users       @relation(references: [id], fields: [AlumnoID])
-  NombreArchivo String
+  NombreArchivo String?
   EvidenciaURL String?
   Estado  EstadoEvidencia @default(SIN_ENTREGAR)
-  RutaArchivo String
+  RutaArchivo String?
 
   @@unique([AlumnoID, ActividadID])
 }

@@ -87,11 +87,23 @@ class TipoActividad {
   TipoActividad({required this.nombre, required this.value});
 }
 
+class EstadoEvidencia {
+  String nombre;
+  String value;
+  EstadoEvidencia({required this.nombre, required this.value});
+}
+
 List<TipoActividad> listaTipoActividad = [
   TipoActividad(value: "PORTAFOLIO", nombre: "Portafolio"),
   TipoActividad(
       value: "ACTIVIDADCOMPLEMENTARIA", nombre: "Actividad Complementaria"),
   TipoActividad(value: "EXAMEN", nombre: "Examen")
+];
+
+List<EstadoEvidencia> listaEstadoEvidencia = [
+  EstadoEvidencia(nombre: "Sin entregar", value: "SIN_ENTREGAR"),
+  EstadoEvidencia(nombre: "A tiempo", value: "A_TIEMPO"),
+  EstadoEvidencia(nombre: "Atraso", value: "ASTRASO")
 ];
 
 class Actividades {
@@ -119,5 +131,54 @@ class Actividades {
         descripcion: json["Descripcion"],
         fechaSubida: DateTime.parse(json["FechaSubida"]),
         fechaPara: DateTime.parse(json["FechaPara"]));
+  }
+}
+
+class EvidenciaAlumnos {
+  final int id;
+  final int actividadID;
+  final String nombre;
+  final String? descripcion;
+  final DateTime? fechaSubida;
+  final int alumnoID;
+  final Alumno alumno;
+  final String? nombreArchivo;
+  final String? evidenciaURL;
+  final String estado;
+
+  EvidenciaAlumnos({
+    required this.id,
+    required this.alumno,
+    required this.alumnoID,
+    required this.actividadID,
+    required this.nombre,
+    required this.descripcion,
+    required this.fechaSubida,
+    required this.nombreArchivo,
+    required this.evidenciaURL,
+    required this.estado,
+  });
+  factory EvidenciaAlumnos.fromJson(Map<String, dynamic> json) {
+    return EvidenciaAlumnos(
+        id: json['id'],
+        actividadID: json["ActividadID"],
+        nombre: json["Nombre"],
+        descripcion: json["Descripcion"],
+        fechaSubida: DateTime.parse(json["FechaSubida"]),
+        alumnoID: json["AlumnoID"],
+        nombreArchivo: json["NombreArchivo"],
+        evidenciaURL: json["EvidenciaURL"],
+        estado: json["Estado"],
+        alumno: Alumno.fromJson(json["Alumno"]));
+  }
+}
+
+class Alumno {
+  final String nombre;
+  Alumno({required this.nombre});
+  factory Alumno.fromJson(Map<String, dynamic> json) {
+    return Alumno(
+      nombre: json["Nombre"],
+    );
   }
 }

@@ -26,10 +26,28 @@ class ApiService {
     dio.options = options2;
   }
   /////////////////////////////////////////////////////////
+  Future<bool> loginProfesor(String user, String pass) async {
+    //var url = Uri.http('$domain:$port', '/Users/login');
+    try {
+      final response = await dio.post("/Users/loginMaestro",
+          data: {"User": user, "Password": pass},
+          options: Options(
+              headers: {HttpHeaders.contentTypeHeader: "application/json"}));
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } on Exception catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   Future<bool> login(String user, String pass) async {
     //var url = Uri.http('$domain:$port', '/Users/login');
     try {
-      final response = await dio.post("/Users/login",
+      final response = await dio.post("/Users/loginMaestro",
           data: {"User": user, "Password": pass},
           options: Options(
               headers: {HttpHeaders.contentTypeHeader: "application/json"}));
@@ -152,9 +170,43 @@ class ApiService {
     }
   }
 
+  Future<List<EvidenciaAlumnos>> getActivityEvidence(
+    int id,
+  ) async {
+    List<EvidenciaAlumnos> lista = [];
+    try {
+      final response = await dio.get("/Evidencia/Evidencias/$id");
+      if (response.statusCode == 200) {
+        final List t = response.data;
+        lista = t.map((item) => EvidenciaAlumnos.fromJson(item)).toList();
+        return lista;
+      }
+      print(response.statusCode);
+      return lista;
+    } on Exception catch (e) {
+      print(e);
+      return lista;
+    }
+  }
+
+  ///Asistencia/TomarAsistenciaHoy/1
   Future<bool> eliminarActividad(int id) async {
     try {
       final response = await dio.delete("/Actividad/BORRAR/actividad/$id");
+      if (response.statusCode == 200) {
+        return true;
+      }
+      print(response.statusCode);
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> tomarAsistenciaHoy() async {
+    try {
+      final response = await dio.get("/Asistencia/TomarAsistenciaHoy/1");
       if (response.statusCode == 200) {
         return true;
       }

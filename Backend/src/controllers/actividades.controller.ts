@@ -23,16 +23,27 @@ export async function getActividades(req: Request, res: Response) {
 export async function CreateActividad(req: Request, res: Response) {
   try {
     const { Tipo, Nombre, Descripcion, FechaFinal } = req.body;
-    const Users = await prisma.users.findMany({where:{Rol:"ALUMNO"}})
+    const Users = await prisma.users.findMany({ where: { Rol: "ALUMNO" } });
     const Activades = await prisma.actividades.create({
       data: {
         Nombre: Nombre,
         Descripcion: Descripcion,
         Tipo: Tipo,
         FechaPara: new Date(FechaFinal),
-        EvidenciaActividad:{ createMany:{data:[Users.map(({id})=>({alum}))]}}
       },
     });
+
+    const Evidencias = await prisma.evidenciaActividad.createMany({
+      data: Users.map((value) => ({
+        ActividadID: Activades.id,
+        AlumnoID: value.id,
+        Nombre: `Activdad - ${Activades.id}`,
+      })),
+    });
+    const Resp = await prisma.actividades.findMany({
+      where: { id: Activades.id },
+    });
+    //   createMany: { data: Users.map((value) => ({AlumnoID:value.id,Nombre:`Activdad - ${id}`,Descripcion:"Mensaje"})) },
     return res.json(Activades);
   } catch (error) {
     console.error(error);
@@ -90,6 +101,13 @@ export async function GetAlumosEvidence(req: Request, res: Response) {
     const { IDActividad } = req.params;
 
     const Activades = await prisma.evidenciaActividad.findMany({
+      orderBy: [
+        {
+          Alumno: {
+            Nombre: "asc",
+          },
+        },
+      ],
       where: { ActividadID: parseInt(IDActividad) },
       include: { Alumno: { select: { Nombre: true } } },
     });
@@ -103,6 +121,7 @@ export async function GetAlumosEvidence(req: Request, res: Response) {
       .json([{ status: "ERROR", mensaje: "Contrasena incorrecta" }]);
   }
 }
+//Evidencias
 
 //file related stuff
 
