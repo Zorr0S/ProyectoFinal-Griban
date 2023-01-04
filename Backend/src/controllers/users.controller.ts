@@ -60,3 +60,28 @@ export async function Register(req: Request, res: Response) {
     res.status(500).json([{ status: "ERROR", mensaje: "Ocurrio un error" }]);
   }
 }
+
+export async function getDatosUser(req: Request, res: Response) {
+  try {
+    const datos = await prisma.users.findMany({
+      where: { Rol: "ALUMNO" },
+      orderBy:[{Nombre:"desc"}],
+      select: {
+        Nombre: true,
+        Asistencias: {
+        
+          include: {
+            Registro: true,
+          },
+        },
+        EvidenciaActividad:true
+
+      },
+    });
+   return res.json(datos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json([{ status: "ERROR", mensaje: "Ocurrio un error" }]);
+  }
+}
+

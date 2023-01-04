@@ -52,7 +52,7 @@ class _TablaAsistenciasState extends State<TablaAsistencias> {
                 _createCeldasFecha(datos[index].asistencia, index) +
                 [
                   DataCell(Text(_porcentajeAsistencia(datos[index].asistencia)
-                      .toString()))
+                      .toStringAsFixed(2)))
                 ]));
   }
 
@@ -74,7 +74,7 @@ class _TablaAsistenciasState extends State<TablaAsistencias> {
         valorRetrasosPositivos;
   }
 
-  _porcentajeAsistencia(List<Asistencia> asistencia) {
+  double _porcentajeAsistencia(List<Asistencia> asistencia) {
     var puntos = _getRetrasos(asistencia);
 
     return (puntos / asistencia.length) * 100;
@@ -91,42 +91,50 @@ class _TablaAsistenciasState extends State<TablaAsistencias> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("Asistencias")),
-        body: Column(
-          children: [
-            FutureBuilder(
-              future: _data,
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return DataTable(
-                      columns: const <DataColumn>[
-                            DataColumn(
-                              label: Expanded(
-                                child: Text(
-                                  'Name',
-                                  style: TextStyle(fontStyle: FontStyle.italic),
-                                ),
-                              ),
-                            ),
-                          ] +
-                          _createFechaColumns(snapshot.data[0].asistencia) +
-                          [
-                            const DataColumn(
-                              label: Expanded(
-                                child: Text(
-                                  'Asistencia',
-                                  style: TextStyle(fontStyle: FontStyle.italic),
-                                ),
-                              ),
-                            )
-                          ],
-                      rows: _createRows(snapshot.data));
-                } else {
-                  return const Text("Cargando");
-                }
-              },
-            ),
-          ],
-        ));
+        body: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                FutureBuilder(
+                  future: _data,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Center(
+                        child: DataTable(
+                            columns: const <DataColumn>[
+                                  DataColumn(
+                                    label: Expanded(
+                                      child: Text(
+                                        'Nombre',
+                                        style: TextStyle(
+                                            fontStyle: FontStyle.italic),
+                                      ),
+                                    ),
+                                  ),
+                                ] +
+                                _createFechaColumns(
+                                    snapshot.data[0].asistencia) +
+                                [
+                                  const DataColumn(
+                                    label: Expanded(
+                                      child: Text(
+                                        'Asistencia',
+                                        style: TextStyle(
+                                            fontStyle: FontStyle.italic),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                            rows: _createRows(snapshot.data)),
+                      );
+                    } else {
+                      return const Text("Cargando");
+                    }
+                  },
+                ),
+              ],
+            )));
   }
 }
 

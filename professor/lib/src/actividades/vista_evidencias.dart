@@ -88,10 +88,7 @@ class _VerEvidenciasAlumnosState extends State<VerEvidenciasAlumnos> {
                                       const url = 'https://flutter.io';
                                       final uri = Uri.parse(url);
                                       if (await canLaunchUrl(uri)) {
-                                        print("si1");
-
                                         await launchUrl(uri);
-                                        print("si");
                                       } else {
                                         throw 'Could not launch $url';
                                       }

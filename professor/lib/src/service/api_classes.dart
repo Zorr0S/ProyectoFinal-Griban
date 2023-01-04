@@ -3,24 +3,49 @@
 class Alumnos {
   final String nombre;
   final List<Asistencia> asistencia;
-  const Alumnos({required this.nombre, required this.asistencia});
+  List<EvidenciaAlumnos> evidencias;
+  Alumnos(
+      {required this.nombre,
+      required this.asistencia,
+      this.evidencias = const []});
+
   factory Alumnos.fromJson(Map<String, dynamic> jsonData) {
     var list = jsonData['Asistencias'] as List;
-    print(list.runtimeType); //returns List<dynamic>
     List<Asistencia> asistList =
         list.map((i) => Asistencia.fromJson(i)).toList();
-    //var aux2 = aux.map((item) => Alumnos.fromJson(item)).toList();
-    print(asistList);
 
     return Alumnos(nombre: jsonData['Nombre'], asistencia: asistList);
   }
   getLit(Map<String, dynamic> jsonData) {
     return jsonData;
   }
-  // gethola(Map<String, dynamic> jsonData) {
-  //   var aux =jsonData.map((key, value) => null)
-  //   Map((item) => Alumnos.fromJson(item)).toList();
-  // }
+}
+
+class DatosAlumnos {
+  final String nombre;
+  final List<Asistencia> asistencia;
+  List<EvidenciaAlumnos> evidencias;
+  DatosAlumnos(
+      {required this.nombre,
+      required this.asistencia,
+      this.evidencias = const []});
+
+  factory DatosAlumnos.fromJson(Map<String, dynamic> jsonData) {
+    var list = jsonData['Asistencias'] as List;
+    List<Asistencia> asistList =
+        list.map((i) => Asistencia.fromJson(i)).toList();
+    var list2 = jsonData['EvidenciaActividad'] as List;
+    List<EvidenciaAlumnos> evidenceList =
+        list2.map((i) => EvidenciaAlumnos.fromJson(i)).toList();
+
+    return DatosAlumnos(
+        nombre: jsonData['Nombre'],
+        asistencia: asistList,
+        evidencias: evidenceList);
+  }
+  getLit(Map<String, dynamic> jsonData) {
+    return jsonData;
+  }
 }
 
 class Asistencia {

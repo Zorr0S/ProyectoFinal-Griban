@@ -81,6 +81,26 @@ class ApiService {
     }
   }
 
+  Future<List<DatosAlumnos>> userData() async {
+    // var url = Uri.http('$domain:$port', '/Asistencia/Asistencia');
+    List<DatosAlumnos> listaAsistencias;
+
+    try {
+      final response = await dio.get('/users/datosUser');
+
+      if (response.statusCode == 200) {
+        final List t = response.data;
+        listaAsistencias =
+            t.map((item) => DatosAlumnos.fromJson(item)).toList();
+        return listaAsistencias;
+      }
+      return listaAsistencias = [];
+    } on Exception catch (e) {
+      print(e);
+      return listaAsistencias = [];
+    }
+  }
+
   Future changeAsistenciaAlumno(
       int periodoID, int asistenciaID, int valor) async {
     try {

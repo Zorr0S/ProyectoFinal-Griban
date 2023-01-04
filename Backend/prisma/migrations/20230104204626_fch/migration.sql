@@ -36,6 +36,7 @@ CREATE TABLE `Asistencias` (
 CREATE TABLE `RegistroAsistencia` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `Letra` VARCHAR(191) NOT NULL,
+    `Descripcion` VARCHAR(191) NOT NULL,
     `Valor` DOUBLE NOT NULL,
     `PeriodoID` INTEGER NOT NULL,
 
@@ -58,11 +59,26 @@ CREATE TABLE `Actividades` (
 CREATE TABLE `EvidenciaActividad` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `ActividadID` INTEGER NOT NULL,
-    `FechaSubida` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `Nombre` VARCHAR(191) NULL,
+    `Descripcion` VARCHAR(191) NULL,
+    `FechaSubida` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
     `AlumnoID` INTEGER NOT NULL,
+    `NombreArchivo` VARCHAR(191) NULL,
     `EvidenciaURL` VARCHAR(191) NULL,
+    `Estado` ENUM('SIN_ENTREGAR', 'A_TIEMPO', 'ASTRASO') NOT NULL DEFAULT 'SIN_ENTREGAR',
+    `RutaArchivo` VARCHAR(191) NULL,
+    `CalificacionID` INTEGER NOT NULL DEFAULT 1,
 
     UNIQUE INDEX `EvidenciaActividad_AlumnoID_ActividadID_key`(`AlumnoID`, `ActividadID`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Calificacion` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `letra` VARCHAR(191) NOT NULL,
+    `valor` DECIMAL(65, 30) NOT NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -79,7 +95,10 @@ ALTER TABLE `Asistencias` ADD CONSTRAINT `Asistencias_PeriodoID_fkey` FOREIGN KE
 ALTER TABLE `RegistroAsistencia` ADD CONSTRAINT `RegistroAsistencia_PeriodoID_fkey` FOREIGN KEY (`PeriodoID`) REFERENCES `Periodo`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `EvidenciaActividad` ADD CONSTRAINT `EvidenciaActividad_ActividadID_fkey` FOREIGN KEY (`ActividadID`) REFERENCES `Actividades`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `EvidenciaActividad` ADD CONSTRAINT `EvidenciaActividad_ActividadID_fkey` FOREIGN KEY (`ActividadID`) REFERENCES `Actividades`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `EvidenciaActividad` ADD CONSTRAINT `EvidenciaActividad_AlumnoID_fkey` FOREIGN KEY (`AlumnoID`) REFERENCES `Users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `EvidenciaActividad` ADD CONSTRAINT `EvidenciaActividad_CalificacionID_fkey` FOREIGN KEY (`CalificacionID`) REFERENCES `Calificacion`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
