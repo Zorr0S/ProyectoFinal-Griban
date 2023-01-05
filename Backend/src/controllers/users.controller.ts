@@ -44,7 +44,7 @@ export async function Login(req: Request, res: Response) {
         AND: [
           { UserName: User },
           { Contrasena: Password },
-          { Rol: "PROFESOR" },
+          { Rol: "ALUMNO" },
         ],
       },
       select: { id: true, UserName: true },
@@ -216,4 +216,50 @@ interface Desgloce {
   EnRiesgo: boolean;
   Excento: boolean;
   Total:number
+}
+
+
+
+export async function getDatoUserbyID(req: Request, res: Response) {
+  try {
+    const {IDUser}= req.params;
+    const users = await prisma.users.findFirstOrThrow({
+      where: { AND:[{id: parseInt(IDUser)},{ Rol: "ALUMNO"}] },
+      orderBy: [{ Nombre: "asc" }],
+      select: {
+        id: true,
+        Nombre: true,
+        Asistencias: {
+          include: {
+            Registro: true,
+          },
+        },
+        EvidenciaActividad: { include: { Calificacion: true } },
+      },
+    });
+    const Activiadaes = await prisma.actividades.count();
+
+    let Datos: Desgloce 
+      let Asistencia = AsistenciasPorcentage(users.Asistencias);
+      let auxExa = ((await GetExamenCal(users.id)) / 10)*100;
+      let auxPorta = ((await GetPortafolioCal(users.id)) / 10)*100;
+      let auxActCom = ((await GetActividadesComCal(users.id)) / 10)*100;
+      let ActividadesEntre = await GetActividadeEntregadas(users.id)
+      Datos={
+        Nombre: users.Nombre,
+        ValorExamen: auxExa,
+        PortaFolio: auxPorta,
+        ActividadCom: auxActCom,
+        Asistencia:Asistencia ,
+        ActividadesEntregadas:ActividadesEntre,
+        EnRiesgo: IsRiesgoRepro(Asistencia, ActividadesEntre),
+        Excento: IsExcento(Asistencia, ActividadesEntre),
+        Total: (auxExa*0.4) + (auxPorta*0.4)+(Asistencia*0.2)
+      };
+
+    return res.json(Datos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json([{ status: "ERROR", mensaje: "Ocurrio un error" }]);
+  }
 }

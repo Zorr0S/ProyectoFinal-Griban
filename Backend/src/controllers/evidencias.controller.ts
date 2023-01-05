@@ -87,3 +87,32 @@ export async function changeCal(req: Request, res: Response) {
       .json([{ status: "ERROR", mensaje: "Contrasena incorrecta" }]);
   }
 }
+
+export async function EntregarEvidencia(req: Request, res: Response) {
+  try {
+    const { IDActividad } = req.params;
+    const {Nombre,Descripcion, IdAlumno} = req.body;
+
+    console.log("Entro")
+
+    const calificacion = await prisma.evidenciaActividad.update({
+      where: { AlumnoID_ActividadID:{
+        ActividadID:parseInt(IDActividad),
+        AlumnoID:IdAlumno
+      }},
+      data:{
+        Nombre,
+        Descripcion,
+        
+      }
+    });
+    return res.json(calificacion);
+  } catch (error) {
+    console.error(error);
+    console.log("no");
+
+    return res
+      .status(500)
+      .json([{ status: "ERROR", mensaje: "Contrasena incorrecta" }]);
+  }
+}
