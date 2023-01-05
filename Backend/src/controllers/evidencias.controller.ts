@@ -95,6 +95,7 @@ export async function EntregarEvidencia(req: Request, res: Response) {
 
     console.log("Entro")
 
+  
     const calificacion = await prisma.evidenciaActividad.update({
       where: { AlumnoID_ActividadID:{
         ActividadID:parseInt(IDActividad),
@@ -103,9 +104,11 @@ export async function EntregarEvidencia(req: Request, res: Response) {
       data:{
         Nombre,
         Descripcion,
-        
+       FechaSubida: new Date() 
       }
     });
+    await ActualizarEstado(IDActividad);
+
     return res.json(calificacion);
   } catch (error) {
     console.error(error);
@@ -114,5 +117,38 @@ export async function EntregarEvidencia(req: Request, res: Response) {
     return res
       .status(500)
       .json([{ status: "ERROR", mensaje: "Contrasena incorrecta" }]);
+  }
+
+  async function ActualizarEstado(IDActividad: string) {
+    const Actividad = await prisma.actividades.findFirstOrThrow({
+      where: { id: parseInt(IDActividad) },
+    });
+
+    const evidencia = await prisma.evidenciaActividad.findMany({
+      where: { ActividadID: parseInt(IDActividad) },
+      include: { Calificacion: true, Alumno: { select: { Nombre: true }, } },
+    });
+
+    evidencia.forEach(async (element) => {
+      if (element.FechaSubida != null) {
+        if (element.FechaSubida > Actividad.FechaPara) {
+          await prisma.evidenciaActividad.update({
+            where: { id: element.id },
+            data: { Estado: "ASTRASO" },
+          });
+        } else if (Actividad.FechaPara < element.FechaSubida) {
+          await prisma.evidenciaActividad.update({
+            where: { id: element.id },
+            data: { Estado: "A_TIEMPO" },
+          });
+        }
+      } else if (new Date() > Actividad.FechaPara &&
+        element.FechaSubida == null) {
+        await prisma.evidenciaActividad.update({
+          where: { id: element.id },
+          data: { Estado: "ASTRASO" },
+        });
+      }
+    });
   }
 }

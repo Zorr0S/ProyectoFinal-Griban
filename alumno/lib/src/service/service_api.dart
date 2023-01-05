@@ -267,6 +267,26 @@ class ApiService {
     }
   }
 
+  Future<bool> entregarEvidencia(
+      int idActividad, String titulo, String descrip) async {
+    try {
+      final response = await dio
+          .post("/Evidencia/Evidencias/entregar/$idActividad", data: {
+        "Nombre": titulo,
+        "Descripcion": descrip,
+        "IdAlumno": global.idUSer
+      });
+      if (response.statusCode == 200) {
+        return true;
+      }
+      print(response.statusCode);
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   Future<bool> tomarAsistenciaHoy() async {
     try {
       final response = await dio.get("/Asistencia/TomarAsistenciaHoy/1");

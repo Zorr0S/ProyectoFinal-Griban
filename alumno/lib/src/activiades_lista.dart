@@ -146,7 +146,9 @@ class _ListaActividadesState extends State<ListaActividades> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => EntregarEvidencia()));
+                                      builder: (_) => EntregarEvidencia(
+                                            idActivadad: _actividades[index].id,
+                                          )));
                             },
                             child: const Text('Entregar'),
                           ),
