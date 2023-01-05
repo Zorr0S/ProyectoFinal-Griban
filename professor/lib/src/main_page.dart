@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'actividades/activadades_crud_page.dart';
 import 'service/service_api.dart';
 import 'tabla_asistencias.dart';
+import 'tabla_final.dart';
 
 class MainHub extends StatefulWidget {
   const MainHub({super.key});
@@ -18,11 +19,8 @@ class _MainHubState extends State<MainHub> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Menu"),
-        leading: IconButton(
-          icon: Container(),
-          onPressed: () {},
-        ),
+        title: const Center(child: Text("Menu")),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
           child: Column(
@@ -59,11 +57,19 @@ class _MainHubState extends State<MainHub> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Container(
+              SizedBox(
                   width: 100,
                   child: Expanded(
                     child: ElevatedButton(
-                        onPressed: () {}, child: Text("Tabla final")),
+                        onPressed: () {
+                          setState(() {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const TablaFinalPage()));
+                          });
+                        },
+                        child: const Text("Tabla final")),
                   )),
             ],
           )

@@ -3,6 +3,7 @@ import 'package:professor/src/service/api_classes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../service/service_api.dart';
+import 'cb_calififcacion.dart';
 
 class VerEvidenciasAlumnos extends StatefulWidget {
   final int id;
@@ -29,7 +30,7 @@ class _VerEvidenciasAlumnosState extends State<VerEvidenciasAlumnos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("ABC Actividades")),
+      appBar: AppBar(title: const Center(child: Text("Evidencia de alumnos"))),
       body: Column(
         children: [
           Container(
@@ -71,6 +72,11 @@ class _VerEvidenciasAlumnosState extends State<VerEvidenciasAlumnos> {
                               Text(snapshot.data![index].nombre),
                               EstadoEvidenciaChip(
                                 estado: snapshot.data![index].estado,
+                              ),
+                              DropDowmCalificacion(
+                                calificacion:
+                                    snapshot.data![index].calificacion,
+                                idEvidencia: snapshot.data![index].id,
                               )
                             ],
                           ),

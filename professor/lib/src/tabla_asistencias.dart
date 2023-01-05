@@ -63,8 +63,6 @@ class _TablaAsistenciasState extends State<TablaAsistencias> {
         asistencia.where((element) => element.registro.letra == "A").toList();
     var justificacion =
         asistencia.where((element) => element.registro.letra == "J").toList();
-    var Faltas =
-        asistencia.where((element) => element.registro.letra == "A").toList();
     var valorRetrasos = (retrasos.length / 3).truncate();
     var valorRetrasosPositivos = (retrasos.length % 3);
 
@@ -90,7 +88,7 @@ class _TablaAsistenciasState extends State<TablaAsistencias> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Asistencias")),
+        appBar: AppBar(title: const Center(child: Text("Asistencias"))),
         body: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Column(

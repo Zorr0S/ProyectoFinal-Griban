@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login Page"),
+        title: const Text("Login"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -67,45 +67,54 @@ class _LoginPageState extends State<LoginPage> {
                     hintText: 'Ingrese su contrasena'),
               ),
             ),
-            TextButton(
-              onPressed: () {
-                // FORGOT PASSWORD SCREEN GOES HERE
-              },
-              child: const Text(
-                'Forgot Password',
-                style: TextStyle(color: Colors.blue, fontSize: 15),
-              ),
-            ),
-            Container(
-              height: 50,
-              width: 250,
-              decoration: BoxDecoration(
-                  color: Colors.blue, borderRadius: BorderRadius.circular(20)),
-              child: TextButton(
-                onPressed: () async {
-                  var resp = await _cliente.loginProfesor(
-                      userTextField.text, contraTextField.text);
+            // TextButton(
+            //   onPressed: () {
+            //     // FORGOT PASSWORD SCREEN GOES HERE
+            //   },
+            //   child: const Text(
+            //     'Forgot Password',
+            //     style: TextStyle(color: Colors.blue, fontSize: 15),
+            //   ),
+            // ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 50,
+                width: 250,
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(20)),
+                child: TextButton(
+                  onPressed: () async {
+                    var resp = await _cliente.loginProfesor(
+                        userTextField.text, contraTextField.text);
 
-                  setState(() {
-                    if (resp == true) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const MainHub()));
-                    } else {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const MainHub()));
-                    }
-                  });
-                },
-                child: const Text(
-                  'Login',
-                  style: TextStyle(color: Colors.white, fontSize: 25),
+                    setState(() {
+                      if (resp == true) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const MainHub()));
+                      } else {
+                        const snackBar = SnackBar(
+                          content: Text('Contrasena incorrecta'),
+                        );
+
+                        // Find the ScaffoldMessenger in the widget tree
+                        // and use it to show a SnackBar.
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    });
+                  },
+                  child: const Text(
+                    'Login',
+                    style: TextStyle(color: Colors.white, fontSize: 25),
+                  ),
                 ),
               ),
             ),
             const SizedBox(
               height: 130,
             ),
-            const Text('New User? Create Account')
+            // const Text('New User? Create Account')
           ],
         ),
       ),

@@ -14,9 +14,8 @@ export async function GetAlumosEvidence(req: Request, res: Response) {
     });
 
     const evidencia = await prisma.evidenciaActividad.findMany({
-      
       where: { ActividadID: parseInt(IDActividad) },
-      include: { Alumno: { select: { Nombre: true } } },
+      include: { Calificacion:true, Alumno: { select: { Nombre: true }, } },
     });
 
     evidencia.forEach(async (element) => {
@@ -26,7 +25,7 @@ export async function GetAlumosEvidence(req: Request, res: Response) {
             where: { id: element.id },
             data: { Estado: "ASTRASO" },
           });
-        } else if ( Actividad.FechaPara <element.FechaSubida) {
+        } else if (Actividad.FechaPara < element.FechaSubida) {
           await prisma.evidenciaActividad.update({
             where: { id: element.id },
             data: { Estado: "A_TIEMPO" },
@@ -55,6 +54,30 @@ export async function GetAlumosEvidence(req: Request, res: Response) {
       include: { Alumno: { select: { Nombre: true } } },
     });
     return res.json(evidencia);
+  } catch (error) {
+    console.error(error);
+    console.log("no");
+
+    return res
+      .status(500)
+      .json([{ status: "ERROR", mensaje: "Contrasena incorrecta" }]);
+  }
+}
+
+export async function changeCal(req: Request, res: Response) {
+  try {
+    const { IDActividad } = req.params;
+    const { CalificacionID } = req.body;
+
+    console.log("Entro")
+
+    const calificacion = await prisma.evidenciaActividad.update({
+      where: { id: parseInt(IDActividad) },
+      data:{
+        CalificacionID: parseInt(CalificacionID)
+      }
+    });
+    return res.json(calificacion);
   } catch (error) {
     console.error(error);
     console.log("no");

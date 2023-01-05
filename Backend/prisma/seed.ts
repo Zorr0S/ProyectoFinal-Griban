@@ -55,40 +55,55 @@ async function main() {
       { Valor: 0, Letra: "R", Descripcion: "Retardo", PeriodoID: Period.id }, // 4
     ],
   });
-//  const Calificaciones= await prisma.
+  const Calificaciones = await prisma.calificacion.createMany({
+    data: [
+      {
+        letra: "F",
+        valor: 5,
+      },
+      {
+        letra: "D",
+        valor: 6,
+      },
+      {
+        letra: "C",
+        valor: 7,
+      },
+      {
+        letra: "B",
+        valor: 8,
+      },
+      {
+        letra: "A",
+        valor: 10,
+      },
+    ],
+  });
   const CurrentDate = new Date();
-    //Fecha de hoy sin horas
+  //Fecha de hoy sin horas
+  const CurrentDay = new Date(
+    CurrentDate.getFullYear(),
+    CurrentDate.getMonth(),
+    CurrentDate.getDay()
+  );
+
+  const Alumnos = await prisma.users.findMany({ where: { Rol: "ALUMNO" } });
+
+  for (let index = 0; index < 6; index++) {
     const CurrentDay = new Date(
       CurrentDate.getFullYear(),
       CurrentDate.getMonth(),
-      CurrentDate.getDay()
+      CurrentDate.getDay() + index
     );
-
-  
-
-    const Alumnos = await prisma.users.findMany({ where: { Rol: "ALUMNO" } });
-
-    for (let index = 0; index < 6; index++) {
-      const CurrentDay = new Date(
-        CurrentDate.getFullYear(),
-        CurrentDate.getMonth(),
-        CurrentDate.getDay()+index
-      );
-      const asistencia = await prisma.asistencias.createMany({
-        data: Alumnos.map(({ id }) => ({
-          Fecha: CurrentDay,
-          AlumnoID: id,
-          RegistroID: 3,
-          PeriodoID: 1,
-        })),
-      });
-    }
-    Alumnos.forEach(async element => {
-
-      
+    const asistencia = await prisma.asistencias.createMany({
+      data: Alumnos.map(({ id }) => ({
+        Fecha: CurrentDay,
+        AlumnoID: id,
+        RegistroID: 3,
+        PeriodoID: 1,
+      })),
     });
-  
-  
+  }
 }
 main()
   .catch((e) => {

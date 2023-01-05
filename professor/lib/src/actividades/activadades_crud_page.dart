@@ -31,7 +31,7 @@ class _ActividadesCrudPageState extends State<ActividadesCrudPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("ABC Actividades")),
+        appBar: AppBar(title: const Center(child: Text("ABC Actividades"))),
         body: SingleChildScrollView(
           child: Column(children: [
             CreateActivadad(

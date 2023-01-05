@@ -12,12 +12,20 @@ class TablaFinalPage extends StatefulWidget {
 
 class _TablaFinalPageState extends State<TablaFinalPage> {
   final _cliente = ApiService();
-  late Future<List<DatosAlumnos>> _data;
+  late Future<List<ResumenUser>> _data;
   @override
   void initState() {
     _data = _cliente.userData();
 
     super.initState();
+  }
+
+  String boolToSiNo(bool dato) {
+    if (dato) {
+      return "Si";
+    } else {
+      return "No";
+    }
   }
 
   List<DataColumn> _createColumn() {
@@ -50,29 +58,70 @@ class _TablaFinalPageState extends State<TablaFinalPage> {
         label: Expanded(
           child: Column(
             children: const [
-              Text("Portafolio de evidencias"),
+              Text("Activiadad Complementaria"),
               Text("20 %"),
             ],
           ),
         ),
       ),
+      const DataColumn(
+        label: Expanded(
+          child: Text("Total"),
+        ),
+      ),
+      const DataColumn(
+        label: Expanded(
+          child: Text("En riesgo?"),
+        ),
+      ),
+      const DataColumn(
+        label: Expanded(
+          child: Text("Excento?"),
+        ),
+      ),
     ];
   }
 
-  List<DataRow> _createRows(List<DatosAlumnos> datos) {
-    return [];
+  // double _getExamenes(List<Evidencia> data) {
+  //   var cantidad = data.length;
+  //   var aux = data.map((e) => e.calificacion);
+  // }
+
+  List<DataRow> _createRows(List<ResumenUser> datos) {
+    return List.generate(
+        datos.length,
+        (index) => DataRow(cells: [
+              DataCell(Text(datos[index].nombre)),
+              DataCell(Center(
+                  child: Text(
+                      datos[index].valorExamen.toStringAsFixed(2)))), //Examen
+              DataCell(Center(
+                  child: Text(datos[index]
+                      .portaFolio
+                      .toStringAsFixed(2)))), //Portafolio
+              DataCell(Center(
+                  child: Text(datos[index]
+                      .actividadCom
+                      .toStringAsFixed(2)))), //Asistencia
+              DataCell(
+                  Center(child: Text(datos[index].total.toStringAsFixed(2)))),
+              DataCell(Center(child: Text(boolToSiNo(datos[index].enRiesgo)))),
+              DataCell(Center(child: Text(boolToSiNo(datos[index].excento))))
+            ]));
   }
 
+//snapshot.data ??
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Center(child: Text("Resumen de alumnos"))),
       body: SingleChildScrollView(
         child: Column(
           children: [
             FutureBuilder(
               future: _data,
               builder: (BuildContext context,
-                  AsyncSnapshot<List<DatosAlumnos>> snapshot) {
+                  AsyncSnapshot<List<ResumenUser>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return DataTable(
                       columns: _createColumn(),
