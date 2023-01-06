@@ -139,23 +139,29 @@ class Actividades {
   final DateTime fechaSubida;
   final DateTime fechaPara;
 
-  const Actividades({
-    required this.id,
-    required this.tipo,
-    required this.nombre,
-    required this.descripcion,
-    required this.fechaSubida,
-    required this.fechaPara,
-  });
+  final Evidencia? evidencia;
+  const Actividades(
+      {required this.id,
+      required this.tipo,
+      required this.nombre,
+      required this.descripcion,
+      required this.fechaSubida,
+      required this.fechaPara,
+      required this.evidencia});
 
   factory Actividades.fromJson(Map<String, dynamic> json) {
+    var list = json['EvidenciaActividad'] as List;
+    List<Evidencia> evidenceList =
+        list.map((i) => Evidencia.fromJson(i)).toList();
+
     return Actividades(
         id: json['id'],
         tipo: json["Tipo"],
         nombre: json["Nombre"],
         descripcion: json["Descripcion"],
         fechaSubida: DateTime.parse(json["FechaSubida"]),
-        fechaPara: DateTime.parse(json["FechaPara"]));
+        fechaPara: DateTime.parse(json["FechaPara"]),
+        evidencia: evidenceList.first);
   }
 }
 

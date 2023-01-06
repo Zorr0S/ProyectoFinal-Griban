@@ -102,8 +102,6 @@ class _LoginPageState extends State<LoginPage> {
                         // Find the ScaffoldMessenger in the widget tree
                         // and use it to show a SnackBar.
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const MainHub()));
                       }
                     });
                   },

@@ -123,6 +123,8 @@ export async function EntregarEvidencia(req: Request, res: Response) {
     const Actividad = await prisma.actividades.findFirstOrThrow({
       where: { id: parseInt(IDActividad) },
     });
+    console.log("Actualizo")
+
 
     const evidencia = await prisma.evidenciaActividad.findMany({
       where: { ActividadID: parseInt(IDActividad) },
@@ -136,18 +138,22 @@ export async function EntregarEvidencia(req: Request, res: Response) {
             where: { id: element.id },
             data: { Estado: "ASTRASO" },
           });
-        } else if (Actividad.FechaPara < element.FechaSubida) {
+          console.log("ASTRASO")
+
+        } else if ( element.FechaSubida < Actividad.FechaPara ) {
           await prisma.evidenciaActividad.update({
             where: { id: element.id },
             data: { Estado: "A_TIEMPO" },
           });
+          console.log("A_TIEMPO")
         }
-      } else if (new Date() > Actividad.FechaPara &&
-        element.FechaSubida == null) {
+      } else if (new Date() > Actividad.FechaPara ) {
         await prisma.evidenciaActividad.update({
           where: { id: element.id },
           data: { Estado: "ASTRASO" },
         });
+        console.log("ASTRASO")
+
       }
     });
   }

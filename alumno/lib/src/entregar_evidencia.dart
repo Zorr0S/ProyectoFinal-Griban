@@ -88,8 +88,11 @@ class _EntregarEvidenciaState extends State<EntregarEvidencia> {
                 if (_formKey.currentState!.validate()) {
                   // If the form is valid, display a snackbar. In the real world,
                   // you'd often call a server or save the information in a database.
-                  await _cliete.entregarEvidencia(
+                  var aux = await _cliete.entregarEvidencia(
                       widget.idActivadad, _titulo.text, _descripcion.text);
+                  setState(() {
+                    Navigator.pop(context, true);
+                  });
                 }
               },
               child: const Text('Submit'),

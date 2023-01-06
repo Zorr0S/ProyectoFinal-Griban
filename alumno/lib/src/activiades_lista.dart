@@ -128,8 +128,15 @@ class _ListaActividadesState extends State<ListaActividades> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(_actividades[index].nombre),
-                          Text(
-                              "Para: ${DateFormat('yyyy-MM-dd').format(_actividades[index].fechaPara).toString()}"),
+                          Row(
+                            children: [
+                              EstadoEvidenciaChip(
+                                  estado:
+                                      _actividades[index].evidencia!.estado),
+                              Text(
+                                  "Para: ${DateFormat('yyyy-MM-dd').format(_actividades[index].fechaPara).toString()}"),
+                            ],
+                          ),
                         ],
                       ),
                       subtitle:
@@ -143,12 +150,14 @@ class _ListaActividadesState extends State<ListaActividades> {
                         children: <Widget>[
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
+                              var uax = Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (_) => EntregarEvidencia(
                                             idActivadad: _actividades[index].id,
                                           )));
+
+                              widget.onChange();
                             },
                             child: const Text('Entregar'),
                           ),
@@ -157,5 +166,37 @@ class _ListaActividadesState extends State<ListaActividades> {
                     ),
                   ],
                 ))).toList());
+  }
+}
+
+class EstadoEvidenciaChip extends StatelessWidget {
+  final String estado;
+  const EstadoEvidenciaChip({super.key, required this.estado});
+  MaterialColor getColor() {
+    // ignore: no_leading_underscores_for_local_identifiers
+    var _estado =
+        listaEstadoEvidencia.firstWhere((element) => element.value == estado);
+    if (_estado.value == "SIN_ENTREGAR") {
+      return Colors.yellow;
+    }
+    if (_estado.value == "A_TIEMPO") {
+      return Colors.green;
+    } else {
+      return Colors.red;
+    }
+  }
+
+  EstadoEvidencia estadoEvidencia() {
+    return listaEstadoEvidencia
+        .firstWhere((element) => element.value == estado);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+        label: Text(
+          estadoEvidencia().nombre,
+        ),
+        backgroundColor: getColor());
   }
 }

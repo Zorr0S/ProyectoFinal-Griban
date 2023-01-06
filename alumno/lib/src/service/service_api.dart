@@ -170,7 +170,8 @@ class ApiService {
   Future<List<Actividades>> getActividades() async {
     List<Actividades> listaActividades = [];
     try {
-      final response = await dio.get("/Actividad/Actividades");
+      final response = await dio.get("/Actividad/Actividades",
+          queryParameters: {"IdUser": global.idUSer});
       if (response.statusCode == 200) {
         final List t = response.data;
         listaActividades = t.map((item) => Actividades.fromJson(item)).toList();

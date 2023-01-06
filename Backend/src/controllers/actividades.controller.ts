@@ -8,7 +8,18 @@ const prisma = new PrismaClient();
 export async function getActividades(req: Request, res: Response) {
   try {
     const { Tipo, Nombre, Descripcion, FechaFinal } = req.body;
-
+    const { IdUser } = req.query;
+    if (IdUser != undefined) {
+      const Activades = await prisma.actividades.findMany({
+        include: {
+          EvidenciaActividad: {
+            where: { AlumnoID: parseInt(IdUser as string) },
+            include: { Calificacion: true },
+          },
+        },
+      });
+      return res.json(Activades);
+    }
     const Activades = await prisma.actividades.findMany();
     return res.json(Activades);
   } catch (error) {
