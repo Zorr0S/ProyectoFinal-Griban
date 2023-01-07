@@ -194,7 +194,7 @@ function AsistenciasPorcentage(
 }
 
 function IsRiesgoRepro(asistencia: number, actividades: number) {
-  if (asistencia < 0.8 && actividades < 0.5) {
+  if (0.8 <=asistencia  && 0.5<=actividades  ) {
     return true;
   }
   return false;
